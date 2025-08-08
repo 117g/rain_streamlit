@@ -28,13 +28,14 @@ def preprocess_data(rain_minutes_by_date):
     return df
 
 def compute_average(df, year_ranges):
-    avg_rows = []
+    avg_dfs = []
     for label, years in year_ranges:
         sub_df = df[df['year'].isin(years)]
         avg_month = sub_df.groupby('month')['rain_count'].mean().reset_index()
-        for _, row in avg_month.iterrows():
-            avg_rows.append({"period": label, "month": row['month'], "avg_rain_count": row['rain_count']})
-    avg_df = pd.DataFrame(avg_rows)
+        avg_month['period'] = label
+        avg_month = avg_month.rename(columns={'rain_count': 'avg_rain_count'})
+        avg_dfs.append(avg_month)
+    avg_df = pd.concat(avg_dfs, ignore_index=True)
     return avg_df
 
 def render_rain_data_tab():
@@ -74,7 +75,7 @@ def render_rain_data_tab():
 
         area_chart = alt.Chart(avg_df).mark_area(opacity=0.4).encode(
             x=alt.X('month:O', title='월'),
-            y=alt.Y('avg_rain_count:Q', title='평균 비 횟수'),
+            y=alt.Y('avg_rain_count:Q', title='평균 비 횟수', stack=None),
             color=alt.Color('period:N', legend=alt.Legend(title="기간")),
             tooltip=['period', 'month', 'avg_rain_count']
         ).properties(width=700, height=400).interactive()
