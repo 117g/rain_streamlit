@@ -76,7 +76,7 @@ def render_rain_data_tab():
         area_chart = alt.Chart(avg_df).mark_area(opacity=0.4).encode(
             x=alt.X('month:O', title='월'),
             y=alt.Y('avg_rain_count:Q', title='평균 비 횟수', stack=None),
-            color=alt.Color('period:N', legend=alt.Legend(title="기간")),
+            color=alt.Color('period:N', legend=alt.Legend(title="기간", orient='bottom')),
             tooltip=['period', 'month', 'avg_rain_count']
         ).properties(width=700, height=400).interactive()
 
@@ -95,7 +95,7 @@ def render_rain_data_tab():
         line_chart = alt.Chart(line_df).mark_line(point=True).encode(
             x=alt.X('month:O', title='월'),
             y=alt.Y('rain_count:Q', title='비 횟수'),
-            color=alt.Color('year:N', legend=alt.Legend(title="연도")),
+            color=alt.Color('year:N', legend=alt.Legend(title="연도", orient='bottom')),
             tooltip=['year', 'month', 'rain_count']
         ).properties(width=700, height=400).interactive()
 
