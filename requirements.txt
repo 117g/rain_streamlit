@@ -1,0 +1,6 @@
+streamlit
+streamlit-js-eval
+holidays
+pandas
+requests
+pytz
