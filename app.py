@@ -129,11 +129,8 @@ def run_app():
 
                             with st.expander("📍 비가 온 시간 목록 보기"):
                                 for t in rain_times:
-                                    st.write(f"✅ {today.strftime('%Y-%m-%d')} | {t}")
+                                    st.write(f"💧 {today.strftime('%Y-%m-%d')} | {t}")
                                     
-                            if rain_times:
-                                st.markdown("**📍 비가 온 시간:**")
-                                st.markdown(", ".join(rain_times))
                         elif status == "no_rain":
                             st.warning("😞 현재 기준 비포가 없습니다.")
                         elif status == "pass":
