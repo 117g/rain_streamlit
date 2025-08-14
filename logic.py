@@ -32,14 +32,12 @@ def daterange(start_date: date, end_date: date):
         current += timedelta(days=1)
 
 def check_bipo_status(date_obj: date, df: pd.DataFrame, kr_holidays, time_end: str) -> tuple[str, tuple[str, ...]]:
-
     if not is_business_day(date_obj, kr_holidays):
         return "pass", tuple()
-        
+
     if df is None or 'RE' not in df.columns:
         return "fail", tuple()
 
-    # 강수량 분석
     df = df.copy()
     df['HHMM'] = df['YYMMDDHHMI'].str[-4:]
     df['RE'] = pd.to_numeric(df['RE'], errors='coerce').fillna(0)
@@ -51,6 +49,7 @@ def check_bipo_status(date_obj: date, df: pd.DataFrame, kr_holidays, time_end: s
     if rain_times_formatted:
         return "rain_detected", tuple(rain_times_formatted)
     return "no_rain", tuple()
+
 
 def process_dates_with_threadpool(dates, auth_key):
     kr_holidays = holidays.KR(years=2020 + get_seoul_today().year - 2020)
