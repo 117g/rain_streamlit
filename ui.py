@@ -48,9 +48,9 @@ def generate_rainy_calendar_html(start_date, end_date, status_by_dates):
         .rain-count { margin-bottom:15px; font-size:0.95em; color:#666; }
         table { border-collapse: collapse; margin: 0 auto; width: 100%; table-layout: auto; }
         th, td { border: none; padding: 5px; text-align: center; }
-        .rainy { color:steelblue; font-weight:bold; background-color:rgba(176,224,230,0.3); border-radius:4px; }
-        .today { color:tomato; font-weight:bold; background-color:rgba(255,99,71,0.1); border-radius:4px; }
         .today-rain { color:green; font-weight:bold; background-color: rgba(23, 255, 87, 0.21); border-radius:4px; }
+        .today { color:tomato; font-weight:bold; background-color:rgba(255,99,71,0.1); border-radius:4px; }
+        .rainy { color:steelblue; font-weight:bold; background-color:rgba(176,224,230,0.3); border-radius:4px; }
         .fail { color:white; background-color:gray; font-weight:bold; border-radius:4px; }
         .past, .future, .outside { color:lightgray; }
         ul.rainy-list { text-align:left; margin:0 0 10px 20px; padding-left:0; color:gray; font-size:0.9em; list-style-position:inside; }
