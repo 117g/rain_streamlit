@@ -76,6 +76,5 @@ def process_dates_with_threadpool(dates, auth_key, kr_holidays):
 
     for d, status in results:
         result_by_status[status[0]].append(d)
-        st.write(f"{d}: {status[0]}")
 
     return result_by_status
