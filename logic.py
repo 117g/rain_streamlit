@@ -2,15 +2,15 @@ from datetime import date, datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 import pandas as pd
 import holidays
-import streamlit as st
 from api import fetch_rain_data
 from config import Config
 import pytz
+import streamlit as st
 
 def is_business_day(d: date, kr_holidays) -> bool:
     return d.weekday() < 5 and d not in kr_holidays and not (d.month == 5 and d.day == 1)
 
-def get_seoul_today():
+def get_seoul_today() -> date:
     return datetime.now(pytz.timezone("Asia/Seoul")).date()
 
 def get_time_range_for_today(date_obj: date) -> tuple[str, str]:
@@ -50,19 +50,16 @@ def check_bipo_status(date_obj: date, df: pd.DataFrame, kr_holidays, time_end: s
         return "rain_detected", tuple(rain_times_formatted)
     return "no_rain", tuple()
 
-
-def process_dates_with_threadpool(dates, auth_key):
-    kr_holidays = holidays.KR(years=2020 + get_seoul_today().year - 2020)
+def process_dates_with_threadpool(dates, auth_key, kr_holidays):
+    results = []
 
     def worker(date_obj):
         try:
             t_start, t_end = get_time_range_for_today(date_obj)
-            st.write(f"날짜 {date_obj}: 시간 범위 {t_start} ~ {t_end}")
             df = fetch_rain_data(date_obj, auth_key, t_start, t_end)
             status = check_bipo_status(date_obj, df, kr_holidays, t_end)
             return date_obj, status
         except Exception as e:
-            st.warning(f"{date_obj} 처리 중 오류 발생: {e}")
             return date_obj, ("fail", tuple())
 
     with ThreadPoolExecutor(max_workers=Config.MAX_THREADS) as executor:
@@ -75,7 +72,9 @@ def process_dates_with_threadpool(dates, auth_key):
         "fail": [],
     }
 
+
     for d, status in results:
         result_by_status[status[0]].append(d)
+        st.write(f"{d}: {status[0]}")
 
     return result_by_status
