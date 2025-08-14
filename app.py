@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 import holidays
 import pytz
 from ui import generate_rainy_calendar_html
-from logic import is_business_day, get_time_range_for_today, daterange, check_bipo_status, process_dates_with_threadpool
+from logic import is_business_day, get_time_range_for_today, get_seoul_today, daterange, check_bipo_status, process_dates_with_threadpool
 from api import fetch_rain_data
 from auth import get_auth_key, test_auth_key, save_auth_key, is_admin
 from config import Config
@@ -106,7 +106,7 @@ def run_app():
 
         if view_option == "Today":
             if st.button("조회"):
-                today = date.today()
+                today = get_seoul_today()
                 kr_holidays = holidays.KR(years=[today.year])
 
                 if not is_business_day(today, kr_holidays):
@@ -156,12 +156,12 @@ def run_app():
                     with st.spinner("조회 중입니다... 잠시만 기다려주세요."):
                         dates = list(daterange(start_date, end_date))
                         kr_holidays = holidays.KR(years=list(range(start_date.year, end_date.year + 1)))
-                        now_time = datetime.now().time()
+                        now_time = datetime.now(pytz.timezone("Asia/Seoul")).time()
 
                         valid_dates = [
                             d for d in dates
                             if is_business_day(d, kr_holidays)
-                            and not (d == today and now_time < Config.TIME_START_OBJ)
+                            and (d != today or now_time >= Config.TIME_START_OBJ)
                         ]
 
                         result_by_status = process_dates_with_threadpool(valid_dates, auth_key)
