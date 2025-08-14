@@ -57,10 +57,11 @@ def process_dates_with_threadpool(dates, auth_key, kr_holidays):
         try:
             t_start, t_end = get_time_range_for_today(date_obj)
             df = fetch_rain_data(date_obj, auth_key, t_start, t_end)
-            status = check_bipo_status(date_obj, df, kr_holidays, t_end)
+            status = check_bipo_status(date_obj, df, kr_holidays, t_end)  # <-- t_end 추가
             return date_obj, status
         except Exception as e:
             return date_obj, ("fail", tuple())
+
 
     with ThreadPoolExecutor(max_workers=Config.MAX_THREADS) as executor:
         results = list(executor.map(worker, dates))
