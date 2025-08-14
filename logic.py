@@ -31,18 +31,20 @@ def daterange(start_date: date, end_date: date):
         yield current
         current += timedelta(days=1)
 
-def check_bipo_status(date_obj: date, df: pd.DataFrame, kr_holidays) -> tuple[str, tuple[str, ...]]:
+def check_bipo_status(date_obj: date, df: pd.DataFrame, kr_holidays, time_end: str) -> tuple[str, tuple[str, ...]]:
+
     if not is_business_day(date_obj, kr_holidays):
         return "pass", tuple()
-
+        
     if df is None or 'RE' not in df.columns:
         return "fail", tuple()
 
+    # 강수량 분석
     df = df.copy()
     df['HHMM'] = df['YYMMDDHHMI'].str[-4:]
     df['RE'] = pd.to_numeric(df['RE'], errors='coerce').fillna(0)
 
-    mask = (df['HHMM'] >= Config.TIME_START) & (df['HHMM'] <= Config.TIME_END) & (df['RE'] != 0)
+    mask = (df['HHMM'] >= Config.TIME_START) & (df['HHMM'] <= time_end) & (df['RE'] != 0)
     rain_times = df.loc[mask, 'HHMM'].tolist()
     rain_times_formatted = [f"{t[:2]}:{t[2:]}" for t in rain_times]
 
@@ -58,7 +60,7 @@ def process_dates_with_threadpool(dates, auth_key):
             t_start, t_end = get_time_range_for_today(date_obj)
             st.write(f"날짜 {date_obj}: 시간 범위 {t_start} ~ {t_end}")
             df = fetch_rain_data(date_obj, auth_key, t_start, t_end)
-            status = check_bipo_status(date_obj, df, kr_holidays)
+            status = check_bipo_status(date_obj, df, kr_holidays, t_end)
             return date_obj, status
         except Exception as e:
             st.warning(f"{date_obj} 처리 중 오류 발생: {e}")
