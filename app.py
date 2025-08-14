@@ -120,9 +120,9 @@ def run_app():
                     else:
                         time_start, time_end = get_time_range_for_today(today)
                         st.write(f"비포 시간범위: {time_start} ~ {time_end}")
-
+                        
                         df = fetch_rain_data(today, auth_key, time_start, time_end)
-                        status, rain_times = check_bipo_status(today, df, kr_holidays)
+                        status, rain_times = check_bipo_status(today, df, kr_holidays, time_end)
 
                         if status == "rain_detected":
                             st.success("💧 오늘은 비포 받는 날!")
@@ -164,7 +164,7 @@ def run_app():
                             and (d != today or now_time >= Config.TIME_START_OBJ)
                         ]
 
-                        result_by_status = process_dates_with_threadpool(valid_dates, auth_key)
+                        result_by_status = process_dates_with_threadpool(valid_dates, auth_key, kr_holidays)
 
                         rain_days = result_by_status.get("rain_detected", [])
                         fail_days = result_by_status.get("fail", [])
